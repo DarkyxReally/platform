@@ -1,0 +1,154 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.platform</groupId>
+		<artifactId>api</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>api-gate</artifactId>
+
+	<properties>
+		<spring-cloud-zuul-ratelimit.version>1.3.2.RELEASE</spring-cloud-zuul-ratelimit.version>
+	</properties>
+	<dependencies>
+		<!-- 网关功能 -->
+		<dependency>
+			<groupId>com.platform.system</groupId>
+			<artifactId>system-zuul-gate</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- 认证服务客户端 -->
+		<dependency>
+			<groupId>com.platform.auth</groupId>
+			<artifactId>auth-client</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- feign请求 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-feign</artifactId>
+		</dependency>
+		<!-- rabbitmq模型 -->
+		<dependency>
+			<groupId>com.platform.rabbitmq</groupId>
+			<artifactId>rabbitmq-common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- 系统公共包 -->
+		<dependency>
+			<groupId>com.platform.system</groupId>
+			<artifactId>system-common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 用户服务客户端 -->
+		<dependency>
+			<groupId>com.platform.user</groupId>
+			<artifactId>user-client</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- 服务注册 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<!-- 配置 客户端 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-client</artifactId>
+		</dependency>
+		<!-- spring web -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- 基于XNIO的高性能 Web 服务器 替换掉tomcat作为服务容器。 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency>
+		<!-- 暴露应用各项指标 获取应用信息是通过 actuator 中的相关 endpoints 获取的 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- netflix-commons工具类 -->
+		<dependency>
+			<groupId>com.netflix.netflix-commons</groupId>
+			<artifactId>netflix-commons-util</artifactId>
+		</dependency>
+		<!-- zuul网关 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-zuul</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 服务限流 -->
+		<dependency>
+			<groupId>com.marcosbarbero.cloud</groupId>
+			<artifactId>spring-cloud-zuul-ratelimit</artifactId>
+			<version>${spring-cloud-zuul-ratelimit.version}</version>
+		</dependency>
+		<!-- spring data redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+
+		<!-- jolokia是用于 JMX-bean 管理的。 应用场景:动态调整运行日志级别 -->
+		<dependency>
+			<groupId>org.jolokia</groupId>
+			<artifactId>jolokia-core</artifactId>
+		</dependency>
+		<!-- HTML模板渲染 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+		</dependency>
+		<!-- 远程日志服务 -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>logging-interceptor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.openfeign</groupId>
+			<artifactId>feign-okhttp</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>

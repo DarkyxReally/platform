@@ -1,0 +1,13 @@
+############################注意不要用使用TAB键进行对齐排版之类的##############################
+spring:
+    application:
+        name: system-monitor
+#    session:
+#        store-type: none
+#启用Feign 客户端Hystrix 熔断
+#feign.hystrix.enabled: true
+server:
+    port: 9003 #启动端口
+    #context-path: /monitor/ #统一为访问的url加上一个前缀  
+#info:
+#    version:@project.version@

@@ -1,0 +1,166 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.platform</groupId>
+    <artifactId>rabbitmq</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>com.platform.rabbitmq</groupId>
+  <artifactId>rabbitmq-ms</artifactId>
+  <dependencies>
+		<!-- MYSQL 数据库连接 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<!-- rabbitmq service实现包 -->
+		<dependency>
+			<groupId>com.platform.rabbitmq</groupId>
+			<artifactId>rabbitmq-service-impl</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- rabbitmq 分表 -->
+		<dependency>
+			<groupId>com.platform.rabbitmq</groupId>
+			<artifactId>rabbitmq-sharding</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- APP 公共包 -->
+		<dependency>
+			<groupId>com.platform.system</groupId>
+			<artifactId>system-common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<!-- auth服务客户端 -->
+		<dependency>
+			<groupId>com.platform.auth</groupId>
+			<artifactId>auth-client</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jdbc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 配置 客户端 ,启动时读取配置中心配置必须 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-feign</artifactId>
+		</dependency>
+		<!-- 暴露应用各项指标 获取应用信息是通过 actuator 中的相关 endpoints 获取的 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<!-- jolokia是用于 JMX-bean 管理的。 应用场景:动态调整运行日志级别 -->
+		<dependency>
+			<groupId>org.jolokia</groupId>
+			<artifactId>jolokia-core</artifactId>
+		</dependency>
+		<!--增加eureka-server的依赖 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-eureka</artifactId>
+		</dependency>
+		<!-- 熔断支持 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+		</dependency>
+		<!-- druid -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+		</dependency>
+
+		<!-- springfox-swagger-ui -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+
+		<!-- rabitmq -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
+		<!-- 极光推送jpush -->
+		<dependency>
+			<groupId>cn.jpush.api</groupId>
+			<artifactId>jpush-client</artifactId>
+		</dependency>
+		<!-- 远程日志服务 -->
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>rabbitmq-ms</finalName>
+		<plugins>
+			<plugin>
+				<!-- compiler插件, 设定JDK版本 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- 跳过测试 -->
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<skipDockerBuild>false</skipDockerBuild>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

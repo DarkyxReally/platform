@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.platform</groupId>
+		<artifactId>user</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<groupId>com.platform.user</groupId>
+	<artifactId>user-dao</artifactId>
+	<dependencies>
+		<dependency>
+    		<groupId>com.platform.user</groupId>
+            <artifactId>user-entity</artifactId>
+            <version>1.0-SNAPSHOT</version>
+    	</dependency>
+    	<dependency>
+    		<groupId>com.platform.user</groupId>
+            <artifactId>user-model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+    	</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<!-- MYSQL 数据库连接 -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<!-- MYBATIS -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>
+		<!-- MYBATIS 增强 -->
+		<dependency>
+			<groupId>tk.mybatis</groupId>
+			<artifactId>mapper</artifactId>
+		</dependency>
+		<!-- Mybatis Generator -->
+		<dependency>
+			<groupId>org.mybatis.generator</groupId>
+			<artifactId>mybatis-generator-core</artifactId>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+</project>

@@ -1,0 +1,351 @@
+﻿#网关配置文件
+gate:
+    #免登陆配置
+    ignore:
+        #开头模糊匹配
+        startWith: 
+          - /api/trader/wechat/image/ #异步通知
+          - /api/trader/wechat/video/
+          - /api/trader/wechat/file/
+          - /api/exhibit/wechat/image/
+          - /api/exhibit/wechat/video/
+          - /api/exhibit/wechat/file/
+          - /api/exhibit/file
+        #全匹配
+        contain: 
+          # 版本检测
+#         - /api/common/version/getVersionInformation
+
+#    oauth:
+#        prefix: /jwt
+#    jwt:
+#        secret: Xe*g@1jda
+#        expiration: 7200
+#        header: token
+#    web:
+#       useHttps: false #是否使用https false 不使用 true 使用
+
+platform-service: 
+    service-id: 
+        user: user-bs #用户服务
+        auth: auth-bs #认证服务
+#认证服务客户端
+auth: 
+    client: 
+        id: api-gate
+        secret: 123456
+        token-header: client-token
+        service-auth: false #是否启用服务间认证
+        user-auth: false #启用用户认证
+        rest-log: true #启用REST请求日志记录
+    user: 
+        token-header: access-token
+#网关使用的redis
+spring: 
+    redis:  
+        database: 1
+        host: 172.16.1.15
+        port: 6381
+        password: hVRy8a3h9F
+        pool:  
+          max-active: 64  
+          max-idle: 8  
+          min-idle: 0  
+          max-wait: 10000
+#    rabbitmq:
+#        host: localhost
+#        port: 5672
+#        username: guest
+#        password: guest
+    rabbitmq:
+        host: 172.16.4.16
+        port: 5672
+        username: ibu
+        password: ibu123
+#zuul配置
+zuul:
+  #sensitiveHeaders: #过滤下游返回的响应头 默认值"Cookie", "Set-Cookie", "Authorization. 参照ZuulProperties中的配置
+  ignoredServices: '*' #忽略其他的服务，除了routes中配置的服务
+  ignoredHeaders: Cookie, X-Application-Context, token
+  prefix: /api  #访问后端服务项目路径前缀
+  host: 
+    maxTotalConnections: 1000 #总连接数默认值200
+    maxPerRouteConnections: 200 #每个路由连接数默认值20
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+#注意:yml中路由的配置是有序的, properties中是无序的
+    trader: #请求展商接口
+      path: /trader/**
+      serviceId: trader-bs
+      strip-prefix: false
+    exhibit: #请求展会接口
+      path: /exhibit/**
+      serviceId: exhibit-bs
+      strip-prefix: false
+#  ratelimit: #限流策略
+#      enabled: true
+#      key-prefix: api-gate:rate-limit  #对应用来标识请求的key的前缀
+#      repository: REDIS  #对应存储类型（用来存储统计信息）
+#      policies:
+#          startGamefortuneWheel: #抽奖限制每3秒钟给抽1次
+#              limit: 1
+#             quota: 1
+#              refresh-interval: 3  
+#              type: user #限流类型主要包括url、origin、user三种        url类型的限流就是通过请求路径区分， origin是通过客户端IP地址区分，user是通过登录用户名进行区分，也包括匿名用户
+#
+zuul.trace: #请求跟踪
+    enabled: true
+    behindProxy: true #在代理服务器之后
+    trace:
+        id: X-Request-Id #跟踪ID请求头名称
+        ip: X-Request-User-Ip #用户IP请求头名称
+zuul.request-log: #请求日志记录
+    enabled: true
+    log-level: DEBUG
+    log-params: true
+    log-reqeust-body: true
+    log-headers: true
+    ingore-headers: #忽略的请求头, 打印日志时会变成*
+        - token
+zuul.security.ip-limit: #IP黑白名单限制
+    enabled: true
+    white-ips: #全局IP白名单限制
+    black-ips: #全局IP黑名单限制
+    policies: 
+        fod_myfruit: # 我的流量果
+            enabled: true #开启限制
+            white-ips: #List格式
+            black-ips: #List格式
+zuul.security.version-limit: #版本号限制
+    enabled: true
+    version-field: verCode
+    min-version: 2.1
+    max-version: 2.6.1
+zuul.security.request-data-sign-check: #请求报文签名校验
+    enabled: true #是否启用
+    sign-field: sign #签名字段
+    version-field: verCode #版本号字段名
+    min-version: 2.6.1 #最低启用版本号
+    allow-empty-sign-value: true #允许不带签名的请求
+    sign-key: txoH88pEf4ip3jbmuB #签名KEY
+    headers: #参与签名的请求头字段
+        - verCode #版本号
+        - idDevice  #设备id
+        - mobileModel #设备型号
+        - platform #设备平台
+        - timestamp #时间戳
+        - token #用户token
+        - X-REQUEST-MD5 #上传文件时, 文件的MD5值
+    policies: 
+#        trader.enabled: false
+zuul.security.request-data-decrypt: #请求报文解密
+    enabled: true
+    sign-field: sign #签名字段
+    version-field: verCode #版本号字段名
+    min-version: 2.6.1 #最低启用版本号
+    pri-key: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKkjX6O44m5ixv4Pl2VOrXZLzg4b8KkRAqJKTbNqYkxkRVbIKTkMa6Vc/Dm7le52IrFKOF2Ats5SXaV8gEspJs97gYXugG00LXwDmnCD0AXtzk+arbMD5lueEIUDuBqrw9ceimDIPnBwGjaWmwKh1g1gYqdaCa5/4bHz1HI6p+tHAgMBAAECgYAnYBXOzqbgHdzHnqeXLRbS2FjzDewb39rmHzgxkY2qzRkbV+PI5SxWRexuIE6KQjRXY7j1g5aLN7+XXAGd/cmL2Ew5d1iV9FEdgDDSQ99DShdUrr9rk9sOi17cNqeLyPMt+Ixs08iyZ571a5q5EAlC5b8apuIa5UkKFY1YkK1ooQJBAOtlOyOPTFtMUzzJ/ohTJsaRVRaLN/7nQsNGiO5qFYE3NYKPKUEix7CBcVNQpW6Gg18e2bGpa7ml6D7t+KdTd3ECQQC38XEsh100G1X1NAnwltfZMBRFWGL4ZsTZ02ehEAfPGneQsvWdmaJVXJU7O+w68JY4VYhCXNdyuYIVShuUAGI3AkAXyAFihU6khqB+KrYRVb08IGClR2lf0kNXcR/SXltP06EPUKFNWFMuTNWDIkmkUeihyn8ZyND+T3mYKfiOBwuxAkAcm9e/VjpfzVScM4DMQ5nEtN6iPnH+MnWxb1jxyv1776DjB4J+BZQi9KhdMx+1tw+WKW9s6uWzeTjLOOB7L2gXAkEAr560kBqz4PwsYxAZRozc5Z5TKajHoHClIcO6WCP66hd2QMf+1gw/R7GPmWaBVCPm3ryJijXOW8aIiZNqjxJpJA==
+zuul.security.response-data-sign: #响应报文签名
+    enabled: false
+    sign-field: sign
+    version-field: verCode #版本号字段名
+    min-version: 2.6.1 #最低启用版本号
+    sign-key: txoH88pEf4ip3jbmuB #签名KEY
+    policies: 
+        oaMerchantList.enabled: false
+        oaMerchantInfo.enabled: false
+        chtf_newUser.enabled: false
+        liguhd_isNewUser.enabled: false
+        chtf_lpInfo.enabled: false
+        chtf_chargeInfo.enabled: false
+        wechatNotice.enabled: false
+        alipayNotice.enabled: false
+        llbbMerchantFinancePayment.enabled: false
+        llbbNotice.enabled: false
+        wsflowNotice.enabled: false
+        unicomActivitySms.enabled: false
+        unicomActivityLogin.enabled: false
+zuul.security.response-data-encrypt: #响应报文加密 
+    enabled: false
+    version-field: verCode #版本号字段名
+    min-version: 2.6.1 #最低启用版本号
+    pri-key: MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKkjX6O44m5ixv4Pl2VOrXZLzg4b8KkRAqJKTbNqYkxkRVbIKTkMa6Vc/Dm7le52IrFKOF2Ats5SXaV8gEspJs97gYXugG00LXwDmnCD0AXtzk+arbMD5lueEIUDuBqrw9ceimDIPnBwGjaWmwKh1g1gYqdaCa5/4bHz1HI6p+tHAgMBAAECgYAnYBXOzqbgHdzHnqeXLRbS2FjzDewb39rmHzgxkY2qzRkbV+PI5SxWRexuIE6KQjRXY7j1g5aLN7+XXAGd/cmL2Ew5d1iV9FEdgDDSQ99DShdUrr9rk9sOi17cNqeLyPMt+Ixs08iyZ571a5q5EAlC5b8apuIa5UkKFY1YkK1ooQJBAOtlOyOPTFtMUzzJ/ohTJsaRVRaLN/7nQsNGiO5qFYE3NYKPKUEix7CBcVNQpW6Gg18e2bGpa7ml6D7t+KdTd3ECQQC38XEsh100G1X1NAnwltfZMBRFWGL4ZsTZ02ehEAfPGneQsvWdmaJVXJU7O+w68JY4VYhCXNdyuYIVShuUAGI3AkAXyAFihU6khqB+KrYRVb08IGClR2lf0kNXcR/SXltP06EPUKFNWFMuTNWDIkmkUeihyn8ZyND+T3mYKfiOBwuxAkAcm9e/VjpfzVScM4DMQ5nEtN6iPnH+MnWxb1jxyv1776DjB4J+BZQi9KhdMx+1tw+WKW9s6uWzeTjLOOB7L2gXAkEAr560kBqz4PwsYxAZRozc5Z5TKajHoHClIcO6WCP66hd2QMf+1gw/R7GPmWaBVCPm3ryJijXOW8aIiZNqjxJpJA==
+    policies: 
+        oaMerchantList.enabled: false
+        oaMerchantInfo.enabled: false
+        chtf_newUser.enabled: false
+        liguhd_isNewUser.enabled: false
+        chtf_lpInfo.enabled: false
+        chtf_chargeInfo.enabled: false
+        wechatNotice.enabled: false
+        alipayNotice.enabled: false
+        llbbMerchantFinancePayment.enabled: false
+        llbbNotice.enabled: false
+        wsflowNotice.enabled: false
+        unicomActivitySms.enabled: false
+        unicomActivityLogin.enabled: false
+zuul.security.unified-sign-check: #统一签名校验
+    enabled: false
+    policies: 
+      llbbMerchantFinancePayment:
+          enabled: true
+          key-map: #密钥对
+              7b36b4ea05a847389e7a4c006705180e: 231707937dcd4592bc999bbca713918c #流量贝贝
+          key-ip-map: #KEY IP限制
+              7b36b4ea05a847389e7a4c006705180e:
+                  - 172.16.6.78
+      oaMerchantList:
+          enabled: true
+          key-map: #密钥对
+              516a67614f174b2797f8526c83fb1f7c: aa042d0d12f6426e8c427ed8b69272d0 #OA
+      oaMerchantInfo:
+          enabled: true
+          key-map: #密钥对
+              516a67614f174b2797f8526c83fb1f7c: aa042d0d12f6426e8c427ed8b69272d0 #OA
+      chtf_newUser:
+          enabled: true
+          key-map:
+              f70b4ffa348e4a88a9120c2deb9fa46d: 84a52f26a65647f1b721cfa859b7fe81 #立咕互动
+      liguhd_isNewUser:
+          enabled: true
+          key-map:
+              f70b4ffa348e4a88a9120c2deb9fa46d: 84a52f26a65647f1b721cfa859b7fe81 #立咕互动          
+      chtf_lpInfo:
+          enabled: true
+          key-map:
+              f70b4ffa348e4a88a9120c2deb9fa46d: 84a52f26a65647f1b721cfa859b7fe81 #立咕互动
+      chtf_chargeInfo:
+          enabled: true
+          key-map:
+              f70b4ffa348e4a88a9120c2deb9fa46d: 84a52f26a65647f1b721cfa859b7fe81 #立咕互动
+zuul.stats.request-time: #请求时间统计
+    enabled: true #启用功能
+    all: true #统计所有
+zuul.stats.request-count: #请求统计(URL,IP,用户)
+    enabled: true #启用功能
+    policies: 
+        startGamefortuneWheel: #统计抽奖情况
+            enabled: true
+            type: 
+              - user
+              - origin
+        wechatNotice: 
+            enabled: true
+            type: 
+              - origin
+        alipayNotice: 
+            enabled: true
+            type: 
+              - origin
+        llbbMerchantFinancePayment: 
+            enabled: true
+            type: 
+              - origin
+        llbbNotice:
+            enabled: true
+            type: 
+              - origin
+        wsflowNotice:
+            enabled: true
+            type: 
+              - origin
+        loginByPwdOld: 
+            enabled: true
+            type:
+              - origin
+        register: 
+            enabled: true
+            type:
+              - origin 
+              - url
+        registerNew:
+            enabled: true
+            type:
+              - origin 
+              - url
+        loginNew: #登陆接口
+            enabled: true
+            type: 
+              - origin 
+              - url
+        cashierLogin: #收银员登陆
+            enabled: true
+            type: 
+              - origin
+        fod_harvest: #流量果收取
+            enabled: true
+            type:
+              - user
+              - origin
+              - url
+        fod_harvest_confirm: #流量果收取二次确认
+            enabled: true
+            type:
+              - user
+              - origin
+              - url
+        fod_count: # 可收取的流量果个数
+            enabled: true
+            type:
+              - user
+              - origin
+              - url
+        fod_myfruit: # 我的流量果
+            enabled: true
+            type:
+              - user
+              - origin
+              - url
+        fod_fruitlist: # 流量果列表
+            enabled: true
+            type:
+              - user
+              - origin
+              - url
+        chtf_reward: #高交会奖励发放
+            enabled: true
+            type:
+              - origin 
+        pointexchangem: #积分通兑
+            enabled: true
+            type:
+              - origin
+zuul.stats.ip-user: #IP地址用户统计
+    enabled: true
+    policies:
+        fod_myfruit: #我的流量果
+            enabled: true 
+#微信配置
+wechat:
+    app-id: wx4dd47bac1a8d0560
+    app-secret: b1aea48039d57a2b1eff9d256ea6a020
+#邀请配置
+invite:
+    new-reward-amount: 66600 #新人邀请奖励值666M （以M为单位的数值 *100）
+    old-reply-min-reward-amount: 10 #老用户抢答最少奖励0.1M  （以M为单位的数值 *100）
+    old-reply-max-reward-amount: 99 #老用户抢答最多奖励 0.999M （以M为单位的数值 *100）
+    race-max-acount: 3 #抢答次数每天最多3次
+    overdue-days: 30 #过期时间（新人预注册过期时间，30天）
+    invite-reward: 5000 #邀请者邀请新人获得流量 50M （以M为单位的数值 *100）
+#app应用宝地址
+appstore:
+   iosurl: http://android.myapp.com/myapp/detail.htm?apkName=com.ibumobile.liguapp #ios地址
+   androidurl: http://android.myapp.com/myapp/detail.htm?apkName=com.ibumobile.liguapp #安卓地址
+
+#暴露给商户的地址
+merchant:
+   cashier: #商户收银员
+      - /api/member/points/pay/pay
+      - /api/member/points/pay/scan
+      - /api/member/points/pay/opr
+      - /api/member/points/pay/reOpr
+      - /api/member/points/pay/recordInfo
+      - /api/mer/payRecord/info
+      - /api/mer/payRecord/list
+      - /api/mer/payRecord/unCompleteOrder
+      - /api/mer/chargeOff/info
+      - /api/mer/chargeOff/list
+      - /api/mer/coupon/detail
+      - /api/mer/coupon/chargeOff
+      - /api/mer/cashier/info
+      - /api/mer/cashier/tegralThreshold

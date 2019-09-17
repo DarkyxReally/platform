@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: system-center
+
+server:
+  port: 9001
+  
+eureka:
+  server:
+    enableSelfPreservation: false # 本地调试环境下关闭自我保护机制，正式环境注释掉
+#  instance:
+#    hostname: localhost
+  client:
+    register-with-eureka: false #false:不作为一个客户端注册到注册中心
+    fetch-registry: false #为true时，可以启动，但报异常：Cannot execute request on any known server
+    serviceUrl:
+            defaultZone: http://localhost:${server.port}/eureka/ #eureka服务注册地址

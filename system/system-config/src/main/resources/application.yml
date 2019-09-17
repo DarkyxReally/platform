@@ -1,0 +1,13 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9001/eureka/
+  instance:
+    prefer-ip-address: true # 优先注册IP地址而不是hostname
+  healthcheck:
+      enabled: true # 启用健康检查,注意:需要引用spring boot actuator
+
+management: #暴露/bus-refresh接口
+  security:
+    enabled: false
+

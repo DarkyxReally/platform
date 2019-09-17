@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.platform.auth.dao.RestOperatorLogEntityDao" >
+  <resultMap id="BaseResultMap" type="com.platform.auth.entity.RestOperatorLogEntity" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id_log" property="idLog" jdbcType="BIGINT" />
+    <result column="id_request" property="idRequest" jdbcType="CHAR" />
+    <result column="req_url" property="reqUrl" jdbcType="VARCHAR" />
+    <result column="req_method" property="reqMethod" jdbcType="VARCHAR" />
+    <result column="req_param" property="reqParam" jdbcType="VARCHAR" />
+    <result column="req_header" property="reqHeader" jdbcType="VARCHAR" />
+    <result column="req_ip" property="reqIp" jdbcType="VARCHAR" />
+    <result column="user_ip" property="userIp" jdbcType="VARCHAR" />
+    <result column="req_date" property="reqDate" jdbcType="TIMESTAMP" />
+    <result column="id_user" property="idUser" jdbcType="VARCHAR" />
+    <result column="service_name" property="serviceName" jdbcType="CHAR" />
+    <result column="system_code" property="systemCode" jdbcType="VARCHAR" />
+    <result column="module" property="module" jdbcType="CHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="id_client" property="idClient" jdbcType="CHAR" />
+    <result column="date_created" property="dateCreated" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.platform.auth.entity.RestOperatorLogEntity" extends="BaseResultMap" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="req_body" property="reqBody" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    id_log, id_request, req_url, req_method, req_param, req_header, req_ip, user_ip, 
+    req_date, id_user, service_name, system_code, module, description, id_client, date_created
+  </sql>
+  <sql id="Blob_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    req_body
+  </sql>
+  <select id="countByExample" parameterType="com.platform.auth.entity.RestOperatorLogEntityExample" resultType="java.lang.Integer" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select count(*) from rest_operator_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+</mapper>

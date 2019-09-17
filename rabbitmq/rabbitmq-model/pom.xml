@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.platform</groupId>
+    <artifactId>rabbitmq</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>com.platform.rabbitmq</groupId>
+  <artifactId>rabbitmq-model</artifactId>
+  <dependencies>
+    	<dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    	<dependency>
+            <groupId>com.platform.system</groupId>
+            <artifactId>system-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- 校验需要 -->
+        <dependency>  
+           <groupId>org.glassfish</groupId>  
+           <artifactId>javax.el</artifactId>
+       </dependency>
+        <dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.41</version>
+		</dependency>
+        <!-- 校验框架 -->
+		<dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>rabbitmq-model</finalName>
+        <plugins>
+   			<plugin>
+   				<!-- compiler插件, 设定JDK版本 -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                	<!-- 跳过测试 -->
+                    <skipTests>${skipTests}</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                	<!-- 跳过docker编译 -->
+                	<skipDockerBuild>true</skipDockerBuild>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

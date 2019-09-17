@@ -1,0 +1,17 @@
+server:
+  port: 9002
+spring:
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:config/ # 搜索src/main/resource 下的properties文件夹下的文件
+  application:
+    name: system-config
+  profiles:
+    active: native  # 配置使用本地储存
+  rabbitmq:
+        host: 172.16.4.16
+        port: 5672
+        username: ibu
+        password: ibu123

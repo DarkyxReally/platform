@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.platform.user.dao.UserThirdEntityDao" >
+  <resultMap id="BaseResultMap" type="com.platform.user.entity.UserThirdEntity" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="third_type" property="thirdType" jdbcType="INTEGER" />
+    <result column="third_uuid" property="thirdUuid" jdbcType="VARCHAR" />
+    <result column="third_url" property="thirdUrl" jdbcType="VARCHAR" />
+    <result column="created_user" property="createdUser" jdbcType="VARCHAR" />
+    <result column="created_date" property="createdDate" jdbcType="TIMESTAMP" />
+    <result column="updated_user" property="updatedUser" jdbcType="VARCHAR" />
+    <result column="updated_date" property="updatedDate" jdbcType="TIMESTAMP" />
+    <result column="serial_number" property="serialNumber" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    user_id, third_type, third_uuid, third_url, created_user, created_date, updated_user, 
+    updated_date, serial_number
+  </sql>
+  <select id="countByExample" parameterType="com.platform.user.entity.UserThirdEntityExample" resultType="java.lang.Integer" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    select count(*) from union_user_third
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+</mapper>

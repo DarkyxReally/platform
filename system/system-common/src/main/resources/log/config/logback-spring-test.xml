@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration scan="${scan:-true}" scanPeriod="60 second" debug="false">
+
+	<!-- Spring Boot的日志系统预先定义了一些系统变量： ${PID}，当前进程ID ${LOG_FILE}，Spring Boot配置文件中logging.file的值 
+		${LOG_PATH}, Spring Boot配置文件中logging.path的值 -->
+	<!-- 测试环境 日志配置 -->
+	<springProfile name="test">
+		<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+		<jmxConfigurator />
+		
+		<springProperty scope="context" name="appname" source="spring.application.name"/>
+		
+		<!-- 格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+		<!-- 输出控制台的格式 -->
+		<property name="CONSOLE_LOG_PATTERN"
+			value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{HOST_IP}] [%X{TRACE_ID}] [%X{USER_ID}] [%thread] %-5level %logger{50} - %msg%n" />
+		<!-- 输出文件的格式 -->
+		<property name="FILE_LOG_PATTERN"
+			value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{HOST_IP}] [%X{TRACE_ID}] [%X{USER_ID}] [%thread] %-5level %logger{50} - %msg%n" />
+	
+		<!-- 业务文件的名称 -->
+		<property name="BUSINESS_FILE_NAME" value="${appname}" />
+		<!-- 错误文件的名称 -->
+		<property name="ERROR_FILE_NAME" value="${appname}-error" />
+		
+		<!-- SQL文件的名称 -->
+		<property name="SQL_FILE_NAME" value="${appname}-sql" />
+		<!-- 慢SQL文件 -->
+		<property name="SLOW_SQL_FILE_NAME" value="${appname}-sql-slow" />
+	
+		<!-- 控制台输出 -->
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+				<charset>utf8</charset>
+			</encoder>
+		</appender>
+		
+		<!-- logstash -->
+		<appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+	      <destination>172.16.5.12:9250</destination>
+	      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+	        <customFields>{"appname":"${appname}","springProfile":"${springProfile}"}</customFields>
+	      </encoder>
+	  	</appender>
+
+		<!-- 业务日志 -->
+		<appender name="BUSINESS_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${FILE_LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<!--日志文件输出的文件名 -->
+				<fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${BUSINESS_FILE_NAME}-%d{yyyy-MM-dd-HH}-%i.log
+				</fileNamePattern>
+				
+				<!-- 单个日志文件最多 20MB, 90天的日志周期，最大不能超过30GB -->
+				<!--日志文件保留天数 -->
+				<maxHistory>90</maxHistory>
+				<!-- 超过maxFileSize中指定大大小时，文件名中的变量%i会加一, 即在不满足时间触发且满足大小触发  -->
+				<maxFileSize>20MB</maxFileSize>
+				<!-- 最大使用容量 -->
+				<totalSizeCap>30GB</totalSizeCap>
+			</rollingPolicy>
+			<!-- 记录的日志级别 -->
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>INFO</level>
+			</filter>
+		</appender>
+		
+		<!-- 错误日志 -->
+		<appender name="EXCEPTION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${FILE_LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<!--日志文件输出的文件名 -->
+				<fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${ERROR_FILE_NAME}-%d{yyyy-MM-dd-HH}.%i.log
+				</fileNamePattern>
+				
+				<!-- 单个日志文件最多 20MB, 90天的日志周期，最大不能超过30GB -->
+				<!--日志文件保留天数 -->
+				<maxHistory>90</maxHistory>
+				<!-- 超过maxFileSize中指定大大小时，文件名中的变量%i会加一, 即在不满足时间触发且满足大小触发  -->
+				<maxFileSize>20MB</maxFileSize>
+				<!-- 最大使用容量 -->
+				<totalSizeCap>30GB</totalSizeCap>
+			</rollingPolicy>
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>ERROR</level>
+			</filter>
+		</appender>
+
+		<!-- SQL日志 -->
+		<appender name="SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${FILE_LOG_PATTERN}</pattern>
+			</encoder>
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<!--日志文件输出的文件名 -->
+				<fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${SQL_FILE_NAME}-%d{yyyy-MM-dd-HH}.%i.log
+				</fileNamePattern>
+				
+				<!-- 单个日志文件最多 20MB, 90天的日志周期，最大不能超过30GB -->
+				<!--日志文件保留天数 -->
+				<maxHistory>90</maxHistory>
+				<!-- 超过maxFileSize中指定大大小时，文件名中的变量%i会加一, 即在不满足时间触发且满足大小触发  -->
+				<maxFileSize>20MB</maxFileSize>
+				<!-- 最大使用容量 -->
+				<totalSizeCap>30GB</totalSizeCap>
+			</rollingPolicy>
+			<!-- 记录的日志级别 -->
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<!-- SQL打印必须是DEBUG级别 -->
+				<level>DEBUG</level>
+			</filter>
+			<!-- 保证append的值为true，这样当天先写入的日志内容就不会丢失： -->
+			<append>true</append> 
+		</appender>
+
+		<!-- 慢SQL日志输出 -->
+		<appender name="SLOW_SQL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<pattern>${FILE_LOG_PATTERN}</pattern>
+			</encoder>
+			<!-- 按天按大小进行分割 -->
+			<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<!--日志文件输出的文件名 -->
+				<fileNamePattern>${LOG_PATH}/%d{yyyy-MM-dd}/${SLOW_SQL_FILE_NAME}-%d{yyyy-MM-dd-HH}.%i.log
+				</fileNamePattern>
+				
+				<!-- 单个日志文件最多 20MB, 90天的日志周期，最大不能超过30GB -->
+				<!--日志文件保留天数 -->
+				<maxHistory>90</maxHistory>
+				<!-- 超过maxFileSize中指定大大小时，文件名中的变量%i会加一, 即在不满足时间触发且满足大小触发  -->
+				<maxFileSize>20MB</maxFileSize>
+				<!-- 最大使用容量 -->
+				<totalSizeCap>30GB</totalSizeCap>
+			</rollingPolicy>
+			<!-- 记录的日志级别 -->
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>DEBUG</level>
+			</filter>
+		</appender>
+
+		<!-- Spring 框架的日志 -->
+		<logger name="org.springframework" level="INFO" />
+		<!-- 事务管理器级别为DEBUG -->
+		<logger name="org.springframework.jdbc.datasource.DataSourceTransactionManager" level="DEBUG" >
+			<appender-ref ref="BUSINESS_FILE"/>
+			<appender-ref ref="stash"/>
+		</logger>
+		<!-- netflix -->
+		<logger name="com.netflix" level="INFO" />
+		<!-- hibernate校验 -->
+		<logger name="org.hibernate.validator" level="INFO" />
+		<!-- HTTP -->
+		<logger name="org.apache.http" level="INFO" />
+		<logger name="org.apache.commons.httpclient" level="INFO" />
+		<logger name="sun.net.www.protocol" level="INFO" />
+		<!-- MYBATIS SPRING -->
+		<logger name="org.mybatis.spring" level="INFO" />
+		<!-- springfox -->
+		<logger name="springfox" level="INFO" />
+
+		<!-- SQL日志 -->
+		<logger name="com.platform.system.common.mybatis.interceptor.PrintSQLInterceptor" level="INFO" additivity="false">
+			<appender-ref ref="SQL_FILE" />
+			<appender-ref ref="stash" />
+		</logger>
+		<!-- 慢SQL -->
+		<logger name="com.platform.system.common.mybatis.interceptor.PrintSlowSQLInterceptor" level="INFO" additivity="false">
+			<appender-ref ref="SLOW_SQL_FILE" />
+			<appender-ref ref="stash" />
+		</logger>
+
+		<!-- 异步输出 -->
+		<appender name="druid-queue" class="ch.qos.logback.classic.AsyncAppender">
+			<!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+			<discardingThreshold>0</discardingThreshold>
+			<!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+			<queueSize>512</queueSize>
+			<!-- 添加附加的appender, 最多只能添加一个 -->
+			<appender-ref ref="SQL_FILE" />
+		</appender>
+
+		<!-- additivity="false" 表示仅在该配置的appender中打印, 不在root中打印 -->
+		<logger name="com.alibaba.druid.pool.PreparedStatementPool" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+		</logger>
+		<logger name="druid.sql.DataSource" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="druid.sql.Connection" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="druid.sql.Statement" level="DEBUG" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="druid.sql.ResultSet" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+
+		<!-- SQL日志级别一定要DEBUG级别,不然打印不了 -->
+		<!--myibatis log configure -->
+		<logger name="org.apache.ibatis" level="DEBUG" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="java.sql.Connection" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="java.sql.Statement" level="DEBUG" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="java.sql.PreparedStatement" level="DEBUG"
+			additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<logger name="java.sql.ResultSet" level="INFO" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+		<!-- DAO层SQL -->
+		<logger name="com.platform.*.dao" level="DEBUG" additivity="false">
+			<appender-ref ref="druid-queue" />
+			<appender-ref ref="stash"/>
+		</logger>
+
+		<!-- 业务数据日志 -->
+		<logger name="com.platform" level="INFO" />
+		<root level="DEBUG">
+			<!-- 输出业务文件 -->
+			<appender-ref ref="BUSINESS_FILE" />
+			<!-- 异常 -->
+			<appender-ref ref="EXCEPTION" />
+			<appender-ref ref="stash"/>
+		</root>
+	</springProfile>
+</configuration>

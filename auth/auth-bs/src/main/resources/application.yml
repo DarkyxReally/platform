@@ -1,0 +1,57 @@
+############################注意不要用使用TAB键进行对齐排版之类的##############################
+#服务器配置项
+server:
+    port: 9020 #服务端口
+#spring配置项
+spring:
+    application:
+        name: ${spring.cloud.config.name:auth-bs}
+    loadbalancer:
+      retry:
+        enabled: true
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+#        default-property-inclusion: non_null
+    http:
+        encoding:
+          force: true
+          charset: UTF-8
+          enabled: true    
+#启用Feign 客户端Hystrix 熔断
+feign.hystrix.enabled: true
+#mybatis配置项
+mybatis: 
+    config: classpath:mybatis/mybatis-config.xml
+    base_package: com.platform.auth.dao
+    mapper_locations: classpath*:mapper/*Mapper.xml
+    type-aliases-package: com.platform.auth.entity
+#swagger配置项
+swagger:
+    basepackage: com.platform.auth
+    service:
+        name: App auth
+        description: app auth
+        developer: platform
+#防雪崩利器：熔断器
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 15000 #10秒超时
+            ribbon:
+                ReadTimeout: 10000
+                ConnectTimeout: 10000
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+endpoints:
+  shutdown:
+    #启用shutdown
+    enabled: true
+    #禁用密码验证
+    sensitive: false
+    #禁用路径
+    path: XxILZtZjrY0VucfOYlsiCLr3zRsHWO2C

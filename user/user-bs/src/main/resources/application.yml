@@ -1,0 +1,63 @@
+############################注意不要用使用TAB键进行对齐排版之类的##############################
+#服务器配置项
+server:
+    port: 9040 #服务端口
+#id序列产生器
+#id_sequence:
+#    worker-id: 0 #工作ID 0-31
+#    data-center-id: 0 #数据中心ID 0-31
+#spring配置项
+spring:
+    application:
+        name: ${spring.cloud.config.name:user-bs}
+    loadbalancer:
+      retry:
+        enabled: true
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+#        default-property-inclusion: non_null
+    http:
+        encoding:
+          force: true
+          charset: UTF-8
+          enabled: true
+#mybatis配置项
+mybatis: 
+    config: classpath:mybatis/mybatis-config.xml
+    base_package: com.platform.user.dao
+    mapper_locations: classpath*:mapper/*Mapper.xml
+    type-aliases-package: com.platform.user.entity
+#swagger配置项
+#swagger:
+#    basepackage: com.ligu.app.user
+#    service:
+#        name: App user
+#        description: app 用户中心
+#        developer: ligu
+#请求和响应GZIP压缩支持
+#启用Feign 客户端Hystrix 熔断
+feign.hystrix.enabled: true
+#防雪崩利器：熔断器
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000 #10秒超时
+            ribbon:
+                ReadTimeout: 10000
+                ConnectTimeout: 10000
+ribbon:
+  eureka:
+      enabled: true
+  MaxAutoRetries: 1
+  MaxAutoRetriesNextServer: 3
+  OkToRetryOnAllOperations: true
+  ConnectTimeout: 20000
+  ReadTimeout: 20000
+  httpclient: #禁用默认的httpclient
+      enabled: false
+  okhttp: #启用okhttp
+      enabled: true

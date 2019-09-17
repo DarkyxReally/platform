@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.platform</groupId>
+		<artifactId>platform</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>rabbitmq</artifactId>
+	<packaging>pom</packaging>
+	<name>rabbitmq</name>
+	<description>rabbitmq模块</description>
+	<properties>
+		<!-- 依赖版本 -->
+		<jpush-client.version>3.3.9</jpush-client.version>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<!-- 极光推送jpush -->
+			<dependency>
+				<groupId>cn.jpush.api</groupId>
+				<artifactId>jpush-client</artifactId>
+				<version>${jpush-client.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<!-- compiler插件, 设定JDK版本 -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<showWarnings>true</showWarnings>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.mybatis.generator</groupId>
+					<artifactId>mybatis-generator-maven-plugin</artifactId>
+					<version>${mybatis-generator-maven-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>com.spotify</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker.plugin.version}</version>
+					<configuration>
+						<!-- 跳过docker编译 -->
+						<skipDockerBuild>true</skipDockerBuild>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<modules>
+		<module>rabbitmq-client</module>
+		<module>rabbitmq-common</module>
+		<module>rabbitmq-dao</module>
+		<module>rabbitmq-entity</module>
+		<module>rabbitmq-lisener</module>
+		<module>rabbitmq-model</module>
+		<module>rabbitmq-ms</module>
+		<module>rabbitmq-service</module>
+		<module>rabbitmq-service-impl</module>
+		<module>rabbitmq-sharding</module>
+	</modules>
+</project>

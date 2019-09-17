@@ -1,0 +1,69 @@
+﻿#spring配置
+spring:
+    datasource:
+        name: db_easework
+        url: jdbc:mysql://172.16.1.15:3306/db_easework?useUnicode=true&characterEncoding=UTF8&zeroDateTimeBehavior=convertToNull
+        username: easework
+        password: 6ZXv2Mzn5?E4
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat,wall,slf4j #统计、防火墙、日志
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validation_query: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    redis:  
+        database: 1
+        host: 172.16.1.15
+        port: 6381  
+        password: hVRy8a3h9F
+        pool:  
+          max-active: 64  
+          max-idle: 8  
+          min-idle: 0  
+          max-wait: 10000
+    rabbitmq:
+        host: 172.16.4.16
+        port: 5672
+        username: ibu
+        password: ibu123
+#服务名称(与相关服务client中的feign服务名对应) 用到了哪些client, 就配置上相关的, 没用到可以不用配置
+platform: 
+    service-id: 
+        user: user-bs #用户服务
+        rabbitmq: rabbitmq-ms #消息推送服务
+#微信的配置项
+wechat:
+    wechat-url: https://api.weixin.qq.com/sns/jscode2session
+    zh-app-id: wxbf845fa61183ff95 #小程序appid
+    zh-secret: 343756aa7e50bd6f867eac103b82a55d #小程序密钥
+#文件配置项
+file:
+    image-max-size: 2
+    file-max-size: 10
+    video-max-size: 50
+    other-file-max-size: 20
+    soft-max-size: 100
+    resources-path: D:\\IBU\\resouce
+#auth 认证相关配置
+auth: 
+  user: #用户认证
+      token-header: Authorization
+      rsa-secret: xx1WET12^%3^(WE45
+      expire: 
+          normal: 2592000 #普通用户token有效期
+          admin: 2592000 #管理员用户token有效期
+          merchant: 2592000  #商户token有效期
+  client: #客户端服务认证
+      id: auth-bs
+      secret: 123456
+      token-header: client-token
+      expire: 2592000
+      rsa-secret: x2318^^(*WRYQWR(QW&T

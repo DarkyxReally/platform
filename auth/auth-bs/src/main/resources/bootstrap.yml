@@ -1,0 +1,38 @@
+############################注意不要用使用TAB键进行对齐排版之类的##############################
+#日志配置项
+logging:
+    #日志路径: 项目名/使用的环境
+    path: ./logs
+    #配置文件
+    config: classpath:log/config/logback-spring-${spring.profiles.active}.xml
+    pattern: 
+        #日志格式
+        console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{HOST_IP}] [%X{TRACE_ID}] [%X{USER_ID}] [%thread] %-5level %logger{50} - %msg%n"
+eureka:
+    instance:
+        statusPageUrlPath: /info
+        healthCheckUrlPath: /health
+        # docker 部署开启
+#        prefer-ip-address: true
+#        ip-address: 127.0.0.1
+    client:
+        registerWithEureka: true
+        fetchRegistry: true
+        serviceUrl:
+            defaultZone: http://localhost:9001/eureka/ #,http://172.16.6.62:9001/eureka/
+            
+#spring配置项
+spring:
+    profiles:
+        active: dev #激活开发环境配置 #profile:表示获取指定环境下配置，例如开发环境、测试环境、生产环境 默认值default，实际开发中可以是 dev、test、demo、product等
+    cloud:
+        #相关配置
+        config:
+            name: auth-bs #配置文件名称
+            profile: ${spring.profiles.active:dev} #读取的配置文件profile属性,默认是dev
+            fail-fast: true
+#            uri: http://localhost:9002 #指定配置文件地址
+            #label: git标签，默认值master
+            discovery: #通过发现配置中心来加载配置
+               enabled: true #开启通过服务来访问Config Server的功能
+               service-id: 'system-config' #配置中心服务
